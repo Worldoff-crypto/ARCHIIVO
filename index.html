@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Práctica de límites trigonométricos</title>
+<style>
+:root{--bg:#E4EDF8;--card:#fff;--tx:#1d2433;--mut:#5a6372;--bl:#1F3FBF;--gr:#1E7F3E;--rd:#D13438;--bd:#c5d1e4;--ok:#d9f3e1;--no:#fbdada;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161b26;--card:#212939;--tx:#e8edf6;--mut:#9aa6ba;--bl:#7f9bff;--gr:#58c97c;--rd:#ff7a7e;--bd:#37425a;--ok:#1d4a2c;--no:#5a2428}}
+:root[data-theme="dark"]{--bg:#161b26;--card:#212939;--tx:#e8edf6;--mut:#9aa6ba;--bl:#7f9bff;--gr:#58c97c;--rd:#ff7a7e;--bd:#37425a;--ok:#1d4a2c;--no:#5a2428}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.45 Georgia,'Times New Roman',serif;min-height:100vh}
+main{max-width:640px;margin:0 auto;padding:18px 16px 40px}
+h1{font:700 20px system-ui,sans-serif;margin:4px 0 2px}
+.sub{color:var(--mut);font:14px system-ui,sans-serif;margin-bottom:12px}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;background:var(--gr);width:0;transition:width .3s}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px}
+.num{font:700 13px system-ui,sans-serif;color:var(--mut);letter-spacing:.04em}
+.q{color:var(--bl);font-size:21px;margin:8px 0 14px;overflow-x:auto;white-space:nowrap}
+.opts{display:grid;gap:10px}
+button{font:600 16px system-ui,sans-serif;border-radius:10px;border:1.5px solid var(--bd);background:var(--card);color:var(--tx);padding:12px;text-align:left;cursor:pointer}
+button.o{font-family:Georgia,serif;font-size:19px}
+button.o.ok{background:var(--ok);border-color:var(--gr)}
+button.o.sel{border-color:var(--bl);background:var(--bg)}
+button.o.no{background:var(--no);border-color:var(--rd)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.row button{text-align:center;flex:1;min-width:120px}
+.pri{background:var(--bl);border-color:var(--bl);color:#fff}
+.box{margin-top:12px;padding:12px;border-radius:10px;background:var(--bg);color:var(--gr);font-size:17px}
+.box.h{color:var(--mut);font-style:italic}
+.box p{margin:5px 0}
+.fb{font:700 16px system-ui,sans-serif;margin-top:12px}
+.end{text-align:center;padding:20px 0}.end b{font-size:40px;color:var(--bl)}
+</style></head><body><main>
+<h1>📐 Práctica: límites trigonométricos</h1>
+<div class="sub">12 ejercicios · modo práctica y modo examen con tiempo</div>
+<div id="tmr" class="sub" style="font-weight:700;color:var(--rd)"></div>
+<div class="bar"><i id="bar"></i></div>
+<div id="app"></div>
+</main>
+<script>
+var D=[
+{q:"lím(x→0) (cos x − 1) / sen²x",c:"−1/2",w:["1/2","0","−1"],h:"Usa 1 − cos²x = (1 − cos x)(1 + cos x).",s:["Sale 0/0.","cos x − 1 = −(1 − cos x) y sen²x = (1 − cos x)(1 + cos x).","Simplificando: −1 / (1 + cos x).","En x = 0: −1 / 2."]},
+{q:"lím(α→0) (2 sen α − tan 2α) / α",c:"0",w:["2","−2","1"],h:"Separa en dos fracciones y escribe tan 2α = sen 2α / cos 2α.",s:["Sale 0/0.","= 2·(sen α / α) − 2·(sen 2α / 2α)·(1 / cos 2α).","Con sen u / u → 1: 2(1) − 2(1)(1/1).","= 2 − 2 = 0."]},
+{q:"lím(v→0) (1 − sec v) / (v² sec v)",c:"−1/2",w:["1/2","0","−1"],h:"Multiplica arriba y abajo por cos v.",s:["Sale 0/0.","Multiplicando por cos v: (cos v − 1) / v².","= −(1 − cos v)(1 + cos v) / [v²(1 + cos v)] = −(sen v / v)² · 1/(1 + cos v).","Límite: −(1)² · 1/2 = −1/2."]},
+{q:"lím(θ→π/2) sen²θ / tan³θ",c:"0",w:["1","∞","−1"],h:"Escribe tan θ = sen θ / cos θ.",s:["sen²θ → 1 y tan θ → ∞.","sen²θ / tan³θ = sen²θ·cos³θ / sen³θ = cos³θ / sen θ.","Con θ = π/2: 0³ / 1 = 0."]},
+{q:"lím(x→0) ∛((cos x − 1)²) / tan x",c:"0",w:["1/2","1","∞"],h:"Escribe la raíz como (1 − cos x)^(2/3) y saca x^(4/3).",s:["Sale 0/0.","∛((cos x − 1)²) = (1 − cos x)^(2/3) = [(1 − cos x)/x²]^(2/3) · x^(4/3).","Entonces: [(1 − cos x)/x²]^(2/3) · (x / tan x) · x^(1/3).","Límite: (1/2)^(2/3) · 1 · 0 = 0."]},
+{q:"lím(w→π/4) cos 2w / (cos w − sen w)",c:"√2",w:["1","√2/2","2"],h:"cos 2w = cos²w − sen²w.",s:["Sale 0/0.","cos 2w = (cos w − sen w)(cos w + sen w).","Simplificando: cos w + sen w.","En w = π/4: √2/2 + √2/2 = √2."]},
+{q:"lím(x→0) tan x / (√(1 − sen x) − √(1 + sen x))",c:"−1",w:["1","0","−2"],h:"Multiplica por el conjugado del denominador.",s:["Sale 0/0. Sea A = √(1 − sen x), B = √(1 + sen x).","Multiplicando por (A + B): tan x (A + B) / (A² − B²).","A² − B² = −2 sen x, y tan x = sen x / cos x.","= −(A + B) / (2 cos x) → −(1 + 1) / 2 = −1."]},
+{q:"lím(α→0) [tan(3+α) − tan(3−α)] / [sen(3−α) − sen(3+α)]",c:"−1/cos³3",w:["1/cos³3","−cos³3","−1/cos 3"],h:"tan A − tan B = sen(A−B) / (cos A cos B). Desarrolla el denominador con suma y resta de ángulos.",s:["Numerador = sen 2α / [cos(3+α) cos(3−α)].","Denominador = −2 cos 3 · sen α.","Con sen 2α = 2 sen α cos α queda: −cos α / [cos 3 · cos(3+α) · cos(3−α)].","Con α → 0: −1 / cos³3 ≈ 1.031."]},
+{q:"lím(θ→π/2) (π/2 − θ) tan θ",c:"1",w:["0","π/2","∞"],h:"Cambia a u = π/2 − θ. Entonces tan θ = cot u.",s:["Sale 0·∞. Con u = π/2 − θ, u → 0 y tan θ = cos u / sen u.","(π/2 − θ) tan θ = cos u · (u / sen u).","Límite: 1 · 1 = 1."]},
+{q:"lím(w→0) (1/tan w − 1/sen w)",c:"0",w:["1","−1","∞"],h:"Escribe 1/tan w = cos w / sen w y resta las fracciones.",s:["Sale ∞ − ∞.","= (cos w − 1) / sen w.","Multiplicando por (cos w + 1): −sen²w / [sen w (1 + cos w)] = −sen w / (1 + cos w).","En w = 0: 0 / 2 = 0."]},
+{q:"lím(x→0) x³ / (2 tan x − sen 2x)",c:"1/2",w:["1","2","0"],h:"Usa sen 2x = 2 sen x cos x y tan x = sen x / cos x.",s:["Sale 0/0.","2 tan x − sen 2x = 2 sen x (1 − cos²x) / cos x = 2 sen³x / cos x.","Entonces: x³ cos x / (2 sen³x) = (1/2)(x / sen x)³ cos x.","Límite: (1/2)(1)³(1) = 1/2."]},
+{q:"lím(x→0) (cos x − 1) / (3x³ csc²x)",c:"0",w:["−1/6","1/6","−1/2"],h:"csc²x = 1/sen²x, así que pasa sen²x al numerador.",s:["Sale 0/0.","= (cos x − 1) sen²x / (3x³).","= −[(1 − cos x)/x²] · [sen²x / x²] · (x/3).","Límite: −(1/2)(1)(0/3) = 0."]}
+];
+var i=0,score=0,done={},exam=false,tl=0,tm=null,app=document.getElementById('app');
+function sh(a){a=a.slice();for(var k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var t=a[k];a[k]=a[j];a[j]=t}return a}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function fmt(t){var m=Math.floor(t/60),s=t%60;return m+':'+(s<10?'0':'')+s}
+function prog(){document.getElementById('bar').style.width=(Object.keys(done).length/D.length*100)+'%'}
+function menu(){clearInterval(tm);exam=false;i=0;score=0;done={};D.forEach(function(d){d.o=null});prog();document.getElementById('tmr').textContent='';
+ app.innerHTML='<div class="card"><div class="num">ELIGE UN MODO</div><p><b>Práctica:</b> con pistas, solución y respuesta inmediata.</p><div class="row"><button class="pri" onclick="start(false)">📖 Empezar práctica</button></div><p><b>Examen simulado:</b> 12 preguntas, sin pistas ni soluciones, con cronómetro. Al terminar ves tu nota y la corrección.</p><div class="row"><button onclick="start(true,20)">⏱ 20 min</button><button onclick="start(true,30)">⏱ 30 min</button><button onclick="start(true,45)">⏱ 45 min</button></div></div>'}
+function start(e,m){clearInterval(tm);exam=e;i=0;score=0;done={};D.forEach(function(d){d.o=null});if(e){tl=m*60;tick();tm=setInterval(tick,1000)}else document.getElementById('tmr').textContent='';show()}
+function tick(){if(tl<0){finish();return}document.getElementById('tmr').textContent='⏱ Tiempo restante: '+fmt(tl);tl--}
+function show(){
+  prog();
+  if(i>=D.length){if(exam){finish();return}app.innerHTML='<div class="card end"><div>Terminaste</div><b>'+score+' / '+D.length+'</b><p>'+(score==D.length?'¡Perfecto!':'Repasa los que fallaste con “Ver solución”.')+'</p><button class="pri" onclick="menu()">Volver al inicio</button></div>';return}
+  var d=D[i];d.o=d.o||sh([d.c].concat(d.w));
+  var h='<div class="card"><div class="num">EJERCICIO '+(i+1)+' DE '+D.length+(exam?' · EXAMEN':'')+'</div><div class="q">'+esc(d.q)+'</div><div class="opts">';
+  d.o.forEach(function(o,k){var cl='o';var dn=done[i];
+    if(exam){if(dn&&dn.p==o)cl+=' sel'}else if(dn){if(o==d.c)cl+=' ok';else if(o==dn.p)cl+=' no'}
+    h+='<button class="'+cl+'" '+(!exam&&dn?'disabled':'onclick="pick('+k+')"')+'>'+esc(o)+'</button>'});
+  h+='</div><div id="ex"></div>';
+  if(!exam)h+='<div class="row"><button onclick="hint()">💡 Pista</button><button onclick="sol()">📖 Ver solución</button></div>';
+  h+='<div class="row">'+(i>0?'<button onclick="i--;show()">← Anterior</button>':'')+(i<D.length-1?'<button class="pri" onclick="i++;show()">Siguiente →</button>':'<button class="pri" onclick="'+(exam?'finish()':'i++;show()')+'">'+(exam?'Entregar examen':'Terminar')+'</button>')+'</div>';
+  if(exam&&i<D.length-1)h+='<div class="row"><button onclick="finish()">Entregar ahora</button></div>';
+  h+='</div>';app.innerHTML=h;
+  if(!exam&&done[i])fb(done[i].r)
+}
+function fb(r){document.getElementById('ex').innerHTML='<div class="fb" style="color:var(--'+(r?'gr':'rd')+')">'+(r?'✔ ¡Correcto!':'✘ Incorrecto. La respuesta es '+esc(D[i].c))+'</div>'}
+function pick(k){var d=D[i],r=d.o[k]==d.c;if(exam){done[i]={p:d.o[k],r:r};show();return}done[i]={p:d.o[k],r:r};if(r)score++;show()}
+function hint(){document.getElementById('ex').innerHTML+='<div class="box h">💡 '+esc(D[i].h)+'</div>'}
+function sol(){document.getElementById('ex').innerHTML+='<div class="box">'+D[i].s.map(function(t,k){return '<p>'+(k+1)+'. '+esc(t)+'</p>'}).join('')+'</div>'}
+function finish(){clearInterval(tm);document.getElementById('tmr').textContent='';
+ var sc=0;D.forEach(function(d,k){if(done[k]&&done[k].r)sc++});
+ var h='<div class="card end"><div>Tu nota</div><b>'+sc+' / '+D.length+'</b><p>'+Math.round(sc/D.length*100)+'% · Sin responder: '+(D.length-Object.keys(done).length)+'</p><button class="pri" onclick="menu()">Volver al inicio</button></div>';
+ D.forEach(function(d,k){var a=done[k];h+='<div class="card" style="margin-top:12px"><div class="num">EJERCICIO '+(k+1)+' · '+(a?(a.r?'✔ CORRECTO':'✘ INCORRECTO'):'— SIN RESPONDER')+'</div><div class="q">'+esc(d.q)+'</div><div>Tu respuesta: '+(a?esc(a.p):'ninguna')+' · Correcta: <b>'+esc(d.c)+'</b></div><div class="box">'+d.s.map(function(t,j){return '<p>'+(j+1)+'. '+esc(t)+'</p>'}).join('')+'</div></div>'});
+ app.innerHTML=h;window.scrollTo(0,0)}
+menu();
+</script></body></html>
